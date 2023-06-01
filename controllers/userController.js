@@ -65,13 +65,14 @@ module.exports = {
   async updateUser (req, res) {
     try {
       const userData = await User.findByIdAndUpdate(
-        {_id: req.params.userId},
-
-        
+        {_id: req.params.id},
+        req.body, 
+        {new: true}
       );
       if(!userData){
         res.json({message: "no user with that ID"})
       }
+      res.json(userData)
     } catch (err) {
       res.status(500).json(err)
     }
@@ -79,13 +80,13 @@ module.exports = {
 //delete remove by id
   async deleteUser (req, res) {
     try {
-      const userData= await User.findByIdAndDelete(
-        {_id: req.params.userId}
-        { $pull: { thoughts: req.params.thoughtId } }
-      );
+      const userData= await User.findByIdAndDelete({
+       _id: req.params.id
+      });
       if(!userData){
         res.json({message: "no user with that ID"})
       }
+      res.json({message: "success!"})
     } catch (err) {
       res.status(500).json(err)
     }
