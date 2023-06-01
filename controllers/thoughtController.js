@@ -59,9 +59,41 @@ module.exports = {
       res.status(500).json(err)
     }
   }
+//`POST` to create a reaction stored in a single thought's `reactions` array field
+  async addReaction (req, res) {
+    try{
+      const thoughtData = await Thought.findOneAndUpdate(
+        { _id: req.params.thoughtId },
+        { $addToSet: { reactions: req.params.reactionId } },
+        { runValidators: true, new: true }
+      );
+      if(!thoughtData){
+        res.json({message: "no thought with that ID"})
+      }
+      res.json(thoughtData)
+    } catch{
+        res.status(500).json(err)
+    }
+  }
+// `DELETE` to pull and remove a reaction by the reaction's `reactionId` value
+  async deleteReaction (req, res) {
+    try{
+      const thoughtData = await Thought.findOneAndUpdate(
+        { _id: req.params.thoughtId },
+        { $pull: { reactions: req.params.reactionId } },
+        { runValidators: true, new: true }
+      );
+      if(!thoughtData){
+        res.json({message: "no thought with that ID"})
+      }
+      res.json(thoughtData)
+    } catch{
+        res.status(500).json(err)
+    }
+  }
 };
 
-//`POST` to create a reaction stored in a single thought's `reactions` array field
+
 
 // `DELETE` to pull and remove a reaction by the reaction's `reactionId` value
 
