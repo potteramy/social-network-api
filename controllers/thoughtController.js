@@ -23,7 +23,7 @@ module.exports = {
   //Get by id
   async getSingleThought(req, res) {
     try {
-      const thoughtData = await Thought.findOne({_id: req.params.thoughtId})
+      const thoughtData = await Thought.findById(req.params.thoughtId)
       res.json(thoughtData)
     } catch (err) {
       res.status(500).json(err)
@@ -33,7 +33,7 @@ module.exports = {
   async updateThought (req, res) {
     try {
       const thoughtData = await Thought.findByIdAndUpdate(
-        {_id: req.params.id},
+        req.params.thoughtId,
         req.body, 
         {new: true}
       );
@@ -48,9 +48,9 @@ module.exports = {
 //delete remove by id
   async deleteThought (req, res) {
     try {
-      const thoughtData= await Thought.findByIdAndDelete({
-       _id: req.params.id
-      });
+      const thoughtData= await Thought.findByIdAndDelete(
+        req.params.thoughtId
+      );
       if(!thoughtData){
         res.json({message: "no thought with that ID"})
       }
@@ -58,36 +58,36 @@ module.exports = {
     } catch (err) {
       res.status(500).json(err)
     }
-  }
+  },
 //`POST` to create a reaction stored in a single thought's `reactions` array field
   async addReaction (req, res) {
     try{
       const thoughtData = await Thought.findOneAndUpdate(
-        { _id: req.params.thoughtId },
-        { $addToSet: { reactions: req.params.reactionId } },
+         req.params.thoughtId,
+        { $addToSet: { reactions: req.body} },
         { runValidators: true, new: true }
       );
       if(!thoughtData){
         res.json({message: "no thought with that ID"})
       }
       res.json(thoughtData)
-    } catch{
+    } catch (err){
         res.status(500).json(err)
     }
-  }
+  },
 // `DELETE` to pull and remove a reaction by the reaction's `reactionId` value
   async deleteReaction (req, res) {
     try{
       const thoughtData = await Thought.findOneAndUpdate(
         { _id: req.params.thoughtId },
-        { $pull: { reactions: req.params.reactionId } },
+        { $pull: { reactions: req.params.reactionId} },
         { runValidators: true, new: true }
       );
       if(!thoughtData){
         res.json({message: "no thought with that ID"})
       }
       res.json(thoughtData)
-    } catch{
+    } catch (err) {
         res.status(500).json(err)
     }
   }
@@ -95,5 +95,4 @@ module.exports = {
 
 
 
-// `DELETE` to pull and remove a reaction by the reaction's `reactionId` value
 
